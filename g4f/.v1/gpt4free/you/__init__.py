@@ -1,4 +1,5 @@
 import json
+import os
 import re
 from typing import Optional, List, Dict, Any
 from uuid import uuid4
@@ -37,8 +38,13 @@ class Completion:
     ) -> YouResponse:
         if chat is None:
             chat = []
+        # proxies = {'http': 'http://' + proxy, 'https': 'http://' + proxy} if proxy else {}
 
-        proxies = {'http': 'http://' + proxy, 'https': 'http://' + proxy} if proxy else {}
+        proxies = {}
+        if os.getenv('http_proxy'):
+            proxies['http'] = os.getenv('http_proxy')
+        if os.getenv('https_proxy'):
+            proxies['https'] = os.getenv('https_proxy')
 
         client = Session(client_identifier='chrome_108')
         client.headers = Completion.__get_headers()
